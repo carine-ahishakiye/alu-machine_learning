@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import numpy as np
+
 arr = [9, 8, 2, 3, 9, 4, 1, 0, 3]
 arr1 =arr [:2]
 print("The first two numbers of the array are: {}".format(arr1))
