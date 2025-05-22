@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-This module contains a function to calculate the shape of a nested list (matrix).
-"""
+"""Calculate the shape of a nested list (matrix)."""
 
 
 def matrix_shape(matrix):
