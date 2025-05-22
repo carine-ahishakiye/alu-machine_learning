@@ -24,5 +24,4 @@ def matrix_transpose(matrix):
             new_row.append(matrix[r][c])
         transposed.append(new_row)
 
-    return transposed:wq
-
+    return transposed
