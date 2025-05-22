@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+Function to add two 2D matrices element-wise.
+"""
+
+
 def add_matrices2D(mat1, mat2):
     """
     Adds two 2D matrices element-wise.
@@ -23,4 +29,4 @@ def add_matrices2D(mat1, mat2):
             for elem1, elem2 in zip(row1, row2)
         ]
         for row1, row2 in zip(mat1, mat2)
-    ]]
+      ]
