@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
 """
-This module contains a function `matrix_shape` that calculates the shape of a nested list (matrix).
+This module contains a function to calculate the shape of a nested list (matrix).
 """
 
+
 def matrix_shape(matrix):
+    """
+    Calculate the shape of a matrix (nested lists).
+
+    Args:
+        matrix (list): A nested list representing the matrix.
+
+    Returns:
+        list: A list of integers representing the size in each dimension.
+    """
     shape = []
     while isinstance(matrix, list):
         shape.append(len(matrix))
