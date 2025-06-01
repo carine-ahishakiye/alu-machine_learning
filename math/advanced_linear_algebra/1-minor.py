@@ -16,7 +16,8 @@ def minor(matrix):
         TypeError: If matrix is not a list of lists.
         ValueError: If matrix is not square or is empty.
     """
-    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+    if not isinstance(matrix, list) or not all(isinstance(row, list)
+                                               for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
     if matrix == [] or any(len(row) != len(matrix) for row in matrix):
@@ -24,7 +25,6 @@ def minor(matrix):
 
     if len(matrix) == 1:
         return [[1]]
-
 
     def determinant(m):
         """Recursively computes the determinant of a square matrix."""
@@ -40,13 +40,12 @@ def minor(matrix):
             det += sign * m[0][col] * determinant(minor)
         return det
 
-
     minors = []
     for i in range(len(matrix)):
         row_minors = []
         for j in range(len(matrix)):
-            minor_ij = [row[:j] + row[j + 1:] for k, row in enumerate(matrix)
-                        if k != i]
+            minor_ij = [row[:j] + row[j + 1:]
+                        for k, row in enumerate(matrix) if k != i]
             row_minors.append(determinant(minor_ij))
         minors.append(row_minors)
 
