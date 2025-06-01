@@ -24,6 +24,10 @@ def definiteness(matrix):
     if len(matrix.shape) != 2 or matrix.shape[0] != matrix.shape[1]:
         return None
 
+    # Check if matrix is symmetric
+    if not np.allclose(matrix, matrix.T):
+        return None
+
     try:
         eigvals = np.linalg.eigvalsh(matrix)
     except Exception:
@@ -39,5 +43,6 @@ def definiteness(matrix):
         return "Negative semi-definite"
     if np.any(eigvals > 0) and np.any(eigvals < 0):
         return "Indefinite"
+
     return None
 
