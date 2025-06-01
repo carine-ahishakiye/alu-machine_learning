@@ -3,6 +3,7 @@
 Module to compute the adjugate matrix of a square matrix.
 """
 
+
 def determinant(matrix):
     """
     Recursively calculates the determinant of a square matrix.
@@ -70,6 +71,5 @@ def adjugate(matrix):
         return [[1]]
 
     cof = cofactor(matrix)
-    # Transpose of the cofactor matrix
-    adj = [list(row) for row in zip(*cof)]
+    adj = [list(row) for row in zip(*cof)]  # Transpose the cofactor matrix
     return adj
