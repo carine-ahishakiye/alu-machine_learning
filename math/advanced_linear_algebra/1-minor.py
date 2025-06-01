@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""This module defines a function to calculate the minor matrix of a square matrix."""
+"""Module to calculate the minor matrix of a square matrix."""
 
 
 def minor(matrix):
