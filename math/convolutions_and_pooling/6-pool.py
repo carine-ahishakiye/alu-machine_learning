@@ -1,39 +1,34 @@
-
 #!/usr/bin/env python3
-"""Module that performs pooling on images."""
+"""Pooling"""
 
 
 import numpy as np
 
 
 def pool(images, kernel_shape, stride, mode='max'):
-    """
-    Performs pooling on images.
+    """Function to perform pooling on images"""
 
-    Parameters:
-    - images: np.ndarray of shape (m, h, w, c)
-    - kernel_shape: tuple of (kh, kw)
-    - stride: tuple of (sh, sw)
-    - mode: 'max' or 'avg'
-
-    Returns:
-    - np.ndarray: pooled images
-    """
     m, h, w, c = images.shape
     kh, kw = kernel_shape
     sh, sw = stride
 
-    out_h = (h - kh) // sh + 1
-    out_w = (w - kw) // sw + 1
-    pooled = np.zeros((m, out_h, out_w, c))
+    # Gives dimensions of the output after pooling and considering stride
+    new_h = (h - kh) // sh + 1
+    new_w = (w - kw) // sw + 1
 
-    for i in range(out_h):
-        for j in range(out_w):
-            region = images[:, i * sh:i * sh + kh, j * sw:j * sw + kw, :]
+    # Initialize the output array
+    output = np.zeros((m, new_h, new_w, c))
+
+    # Pooling operation based on mode
+    for y in range(0, new_h * sh, sh):
+        for x in range(0, new_w * sw, sw):
             if mode == 'max':
-                pooled[:, i, j, :] = np.max(region, axis=(1, 2))
+                output[:, y // sh, x // sw, :] = np.max(
+                    images[:, y: y + kh, x: x + kw, :], axis=(1, 2))
             elif mode == 'avg':
-                pooled[:, i, j, :] = np.mean(region, axis=(1, 2))
+                output[:, y // sh, x // sw, :] = np.mean(
+                    images[:, y: y + kh, x: x + kw, :], axis=(1, 2))
+            else:
+                raise ValueError("Mode should be either 'max' or 'avg'")
 
-    return pooled
-
+    return output
