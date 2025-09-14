@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Neuron class with forward propagation, cost, evaluation, and gradient descent"""
+"""
+Neuron class with forward propagation, cost, evaluation,
+and gradient descent
+"""
 
 import numpy as np
 
@@ -18,7 +21,6 @@ class Neuron:
         if nx < 1:
             raise ValueError("nx must be positive")
 
-        # Private attributes
         self.__W = np.random.randn(1, nx)
         self.__b = 0
         self.__A = 0
@@ -39,7 +41,7 @@ class Neuron:
         return self.__A
 
     def forward_prop(self, X):
-        """Forward propagation"""
+        """Calculate forward propagation"""
         Z = np.dot(self.__W, X) + self.__b
         self.__A = 1 / (1 + np.exp(-Z))
         return self.__A
@@ -47,7 +49,9 @@ class Neuron:
     def cost(self, Y, A):
         """Compute logistic regression cost"""
         m = Y.shape[1]
-        cost = - (1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = - (1 / m) * np.sum(
+            Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
+        )
         return cost
 
     def evaluate(self, X, Y):
@@ -67,11 +71,9 @@ class Neuron:
             alpha (float): learning rate
         """
         m = Y.shape[1]
-        # Compute gradients
         dZ = A - Y
         dW = np.dot(dZ, X.T) / m
         db = np.sum(dZ) / m
 
-        # Update weights and bias
         self.__W -= alpha * dW
         self.__b -= alpha * db
