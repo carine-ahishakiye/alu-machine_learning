@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 NeuralNetwork class with one hidden layer performing
-binary classification, private attributes with getters
+binary classification with private attributes
 """
 
 import numpy as np
@@ -39,30 +39,24 @@ class NeuralNetwork:
     # Getters for private attributes
     @property
     def W1(self):
-        """Getter for hidden layer weights"""
         return self.__W1
 
     @property
     def b1(self):
-        """Getter for hidden layer bias"""
         return self.__b1
 
     @property
     def A1(self):
-        """Getter for hidden layer activation"""
         return self.__A1
 
     @property
     def W2(self):
-        """Getter for output neuron weights"""
         return self.__W2
 
     @property
     def b2(self):
-        """Getter for output neuron bias"""
         return self.__b2
 
     @property
     def A2(self):
-        """Getter for output neuron activation"""
         return self.__A2
