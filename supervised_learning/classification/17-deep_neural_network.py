@@ -14,7 +14,7 @@ class DeepNeuralNetwork:
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        # Validate layers
+        # Validate layers type and not empty
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
 
@@ -23,13 +23,13 @@ class DeepNeuralNetwork:
         self.__weights = {}
 
         prev_nodes = nx
-        # Single loop for validation and weight initialization
+
+        # Single loop: validate layer nodes + initialize weights/biases
         for i, nodes in enumerate(layers):
             if not isinstance(nodes, int) or nodes <= 0:
                 raise TypeError("layers must be a list of positive integers")
-            # He et al. initialization for weights
+
             self.__weights["W" + str(i + 1)] = np.random.randn(nodes, prev_nodes) * np.sqrt(2 / prev_nodes)
-            # Bias initialization to zeros
             self.__weights["b" + str(i + 1)] = np.zeros((nodes, 1))
             prev_nodes = nodes
 
