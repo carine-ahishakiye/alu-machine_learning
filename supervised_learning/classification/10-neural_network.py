@@ -1,42 +1,43 @@
 #!/usr/bin/env python3
-"""
-NeuralNetwork class with one hidden layer performing
-binary classification and forward propagation
+"""NeuralNetwork class with one hidden layer performing binary classification
 """
 
 import numpy as np
 
 
 class NeuralNetwork:
-    """Neural network with one hidden layer"""
+    """Defines a neural network with one hidden layer"""
 
     def __init__(self, nx, nodes):
         """
         Initialize the neural network
         Args:
             nx (int): number of input features
-            nodes (int): number of nodes in the hidden layer
+            nodes (int): number of nodes in hidden layer
         """
+        # Validate nx
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
+
+        # Validate nodes
         if not isinstance(nodes, int):
             raise TypeError("nodes must be an integer")
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
 
-        # Hidden layer private attributes
-        self.__W1 = np.random.randn(nodes, nx)
-        self.__b1 = np.zeros((nodes, 1))
-        self.__A1 = 0
+        # Hidden layer parameters
+        self.__W1 = np.random.randn(nodes, nx)  # weight matrix
+        self.__b1 = np.zeros((nodes, 1))        # bias
+        self.__A1 = 0                           # activated output
 
-        # Output neuron private attributes
-        self.__W2 = np.random.randn(1, nodes)
-        self.__b2 = 0
-        self.__A2 = 0
+        # Output neuron parameters
+        self.__W2 = np.random.randn(1, nodes)   # weight vector
+        self.__b2 = 0                           # bias
+        self.__A2 = 0                           # activated output
 
-    # Getters for private attributes
+    # Getters only
     @property
     def W1(self):
         return self.__W1
@@ -63,18 +64,20 @@ class NeuralNetwork:
 
     def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neural network
+        Calculates forward propagation
         Args:
-            X (np.ndarray): input data of shape (nx, m)
+            X (ndarray): shape (nx, m), input data
         Returns:
-            tuple: activated outputs (__A1, __A2)
+            A1, A2 (ndarray): activated outputs of hidden and output layers
         """
-        # Sigmoid activation for hidden layer
-        Z1 = np.dot(self.__W1, X) + self.__b1
+        # Hidden layer linear step
+        Z1 = np.matmul(self.__W1, X) + self.__b1
+        # Hidden layer activation (sigmoid)
         self.__A1 = 1 / (1 + np.exp(-Z1))
 
-        # Sigmoid activation for output neuron
-        Z2 = np.dot(self.__W2, self.__A1) + self.__b2
+        # Output neuron linear step
+        Z2 = np.matmul(self.__W2, self.__A1) + self.__b2
+        # Output activation (sigmoid)
         self.__A2 = 1 / (1 + np.exp(-Z2))
 
         return self.__A1, self.__A2
