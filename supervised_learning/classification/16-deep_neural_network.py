@@ -17,21 +17,19 @@ class DeepNeuralNetwork:
         # Validate layers
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if not all(isinstance(n, int) and n > 0 for n in layers):
-            raise TypeError("layers must be a list of positive integers")
 
-        # Number of layers
+        # Initialize attributes
         self.L = len(layers)
-        # Cache for intermediate values
         self.cache = {}
-        # Weights and biases
         self.weights = {}
 
-        # Initialize weights and biases with one loop
-        for l in range(1, self.L + 1):
-            nodes = layers[l - 1]
-            prev_nodes = nx if l == 1 else layers[l - 2]
-            self.weights["W" + str(l)] = (
+        prev_nodes = nx
+        # Only one loop allowed: validate layers and initialize weights/biases
+        for i, nodes in enumerate(layers):
+            if not isinstance(nodes, int) or nodes <= 0:
+                raise TypeError("layers must be a list of positive integers")
+            self.weights["W" + str(i + 1)] = (
                 np.random.randn(nodes, prev_nodes) * np.sqrt(2 / prev_nodes)
             )
-            self.weights["b" + str(l)] = np.zeros((nodes, 1))
+            self.weights["b" + str(i + 1)] = np.zeros((nodes, 1))
+            prev_nodes = nodes
