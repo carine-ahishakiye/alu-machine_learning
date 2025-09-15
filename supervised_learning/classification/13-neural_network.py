@@ -93,3 +93,48 @@ class NeuralNetwork:
         )
         return cost
 
+    def evaluate(self, X, Y):
+        """
+        Evaluates the neural network’s predictions
+        Args:
+            X (ndarray): input data, shape (nx, m)
+            Y (ndarray): correct labels, shape (1, m)
+        Returns:
+            prediction (ndarray): predicted labels, shape (1, m)
+            cost (float): cost of the model
+        """
+        _, A2 = self.forward_prop(X)
+        cost = self.cost(Y, A2)
+
+        prediction = np.where(A2 >= 0.5, 1, 0)
+        return prediction, cost
+
+    def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
+        """
+        Performs one pass of gradient descent
+        Args:
+            X (ndarray): input data of shape (nx, m)
+            Y (ndarray): true labels of shape (1, m)
+            A1 (ndarray): activated output of hidden layer
+            A2 (ndarray): predicted output of output neuron
+            alpha (float): learning rate
+        Updates:
+            __W1, __b1, __W2, __b2
+        """
+        m = X.shape[1]
+
+        # Output layer gradients
+        dZ2 = A2 - Y                         # (1, m)
+        dW2 = (1 / m) * np.matmul(dZ2, A1.T) # (1, nodes)
+        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
+
+        # Hidden layer gradients
+        dZ1 = np.matmul(self.__W2.T, dZ2) * (A1 * (1 - A1))  # (nodes, m)
+        dW1 = (1 / m) * np.matmul(dZ1, X.T)                  # (nodes, nx)
+        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)   # (nodes, 1)
+
+        # Update parameters
+        self.__W1 -= alpha * dW1
+        self.__b1 -= alpha * db1
+        self.__W2 -= alpha * dW2
+        self.__b2 -= alpha * db2
