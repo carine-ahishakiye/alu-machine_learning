@@ -21,14 +21,12 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
+        # One loop allowed for weights/biases initialization
         for l in range(self.__L):
             layer_size = layers[l]
-            if l == 0:
-                prev_size = nx
-            else:
-                prev_size = layers[l-1]
-            # He et al. initialization
-            self.__weights['W' + str(l + 1)] = np.random.randn(layer_size, prev_size) * np.sqrt(2 / prev_size)
+            prev_size = nx if l == 0 else layers[l - 1]
+            self.__weights['W' + str(l + 1)] = np.random.randn(
+                layer_size, prev_size) * np.sqrt(2 / prev_size)
             self.__weights['b' + str(l + 1)] = np.zeros((layer_size, 1))
 
     @property
@@ -49,10 +47,11 @@ class DeepNeuralNetwork:
     def forward_prop(self, X):
         """Calculates forward propagation of the neural network"""
         self.__cache['A0'] = X
+        # One loop allowed for forward propagation
         for l in range(self.__L):
             W = self.__weights['W' + str(l + 1)]
             b = self.__weights['b' + str(l + 1)]
             A_prev = self.__cache['A' + str(l)]
             Z = np.dot(W, A_prev) + b
-            self.__cache['A' + str(l + 1)] = 1 / (1 + np.exp(-Z))  # Sigmoid
+            self.__cache['A' + str(l + 1)] = 1 / (1 + np.exp(-Z))
         return self.__cache['A' + str(self.__L)], self.__cache
