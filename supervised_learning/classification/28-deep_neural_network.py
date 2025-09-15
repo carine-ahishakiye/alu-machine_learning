@@ -15,7 +15,7 @@ class DeepNeuralNetwork:
             raise ValueError("nx must be a positive integer")
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if not all(isinstance(l, int) and l > 0 for l in layers):
+        if not all(isinstance(n, int) and n > 0 for n in layers):
             raise TypeError("layers must be a list of positive integers")
         if activation not in ('sig', 'tanh'):
             raise ValueError("activation must be 'sig' or 'tanh'")
@@ -25,13 +25,14 @@ class DeepNeuralNetwork:
         self.__weights = {}
         self.__activation = activation
 
-        for l in range(1, self.__L + 1):
-            layer_size = layers[l - 1]
-            prev_size = nx if l == 1 else layers[l - 2]
+        for layer_idx in range(1, self.__L + 1):
+            layer_size = layers[layer_idx - 1]
+            prev_size = nx if layer_idx == 1 else layers[layer_idx - 2]
             # He initialization
-            self.__weights['W' + str(l)] = (np.random.randn(layer_size, prev_size)
-                                            * np.sqrt(2 / prev_size))
-            self.__weights['b' + str(l)] = np.zeros((layer_size, 1))
+            self.__weights['W' + str(layer_idx)] = (
+                np.random.randn(layer_size, prev_size) * np.sqrt(2 / prev_size)
+            )
+            self.__weights['b' + str(layer_idx)] = np.zeros((layer_size, 1))
 
     @property
     def L(self):
@@ -52,35 +53,33 @@ class DeepNeuralNetwork:
     def forward_prop(self, X):
         """Calculates forward propagation of the network"""
         self.__cache['A0'] = X
-        for l in range(1, self.__L + 1):
-            Wl = self.__weights['W' + str(l)]
-            bl = self.__weights['b' + str(l)]
-            Al_prev = self.__cache['A' + str(l - 1)]
-            Zl = np.dot(Wl, Al_prev) + bl
-            if l != self.__L:
+        for layer_idx in range(1, self.__L + 1):
+            W = self.__weights['W' + str(layer_idx)]
+            b = self.__weights['b' + str(layer_idx)]
+            A_prev = self.__cache['A' + str(layer_idx - 1)]
+            Z = np.dot(W, A_prev) + b
+            if layer_idx != self.__L:
                 if self.__activation == 'sig':
-                    Al = 1 / (1 + np.exp(-Zl))
-                else:  # tanh
-                    Al = np.tanh(Zl)
+                    A = 1 / (1 + np.exp(-Z))
+                else:
+                    A = np.tanh(Z)
             else:
-                # Output layer uses sigmoid
-                Al = 1 / (1 + np.exp(-Zl))
-            self.__cache['A' + str(l)] = Al
-        return self.__cache['A' + str(self.__L)], self.__cache
+                A = 1 / (1 + np.exp(-Z))
+            self.__cache['A' + str(layer_idx)] = A
+        return A, self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost using logistic regression"""
+        """Calculates cost using logistic regression"""
         m = Y.shape[1]
-        cost = -np.sum(Y * np.log(A) +
-                       (1 - Y) * np.log(1.0000001 - A)) / m
+        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates predictions and cost"""
+        """Evaluates network predictions"""
         A, _ = self.forward_prop(X)
         cost = self.cost(Y, A)
-        prediction = np.where(A >= 0.5, 1, 0)
-        return prediction, cost
+        predictions = np.where(A >= 0.5, 1, 0)
+        return predictions, cost
 
     def gradient_descent(self, Y, alpha=0.05):
         """Performs one pass of gradient descent"""
@@ -88,9 +87,58 @@ class DeepNeuralNetwork:
         weights_copy = self.__weights.copy()
         dZ = self.__cache['A' + str(self.__L)] - Y
 
-        for l in reversed(range(1, self.__L + 1)):
-            Al_prev = self.__cache['A' + str(l - 1)]
-            Wl = weights_copy['W' + str(l)]
-            bl = weights_copy['b' + str(l)]
+        for layer_idx in reversed(range(1, self.__L + 1)):
+            A_prev = self.__cache['A' + str(layer_idx - 1)]
+            W = weights_copy['W' + str(layer_idx)]
 
-            dW = np.dot(dZ, Al_prev.T) / m
+            dW = np.dot(dZ, A_prev.T) / m
+            db = np.sum(dZ, axis=1, keepdims=True) / m
+
+            if layer_idx > 1:
+                A_prev_Z = self.__cache['A' + str(layer_idx - 1)]
+                if self.__activation == 'sig':
+                    dZ = np.dot(W.T, dZ) * (A_prev_Z * (1 - A_prev_Z))
+                else:
+                    dZ = np.dot(W.T, dZ) * (1 - A_prev_Z**2)
+
+            self.__weights['W' + str(layer_idx)] -= alpha * dW
+            self.__weights['b' + str(layer_idx)] -= alpha * db
+
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
+        """Trains the neural network"""
+        costs, steps_list = [], []
+        for i in range(iterations + 1):
+            A, _ = self.forward_prop(X)
+            cost = self.cost(Y, A)
+            if i % step == 0 or i == iterations:
+                if verbose:
+                    print(f"Cost after {i} iterations: {cost}")
+                if graph:
+                    costs.append(cost)
+                    steps_list.append(i)
+            self.gradient_descent(Y, alpha)
+        if graph:
+            import matplotlib.pyplot as plt
+            plt.plot(steps_list, costs)
+            plt.xlabel("iteration")
+            plt.ylabel("cost")
+            plt.title("Training Cost")
+            plt.show()
+        return self.evaluate(X, Y)
+
+    def save(self, filename):
+        """Saves the instance object to a file"""
+        if not filename.endswith('.pkl'):
+            filename += '.pkl'
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load(filename):
+        """Loads a pickled DeepNeuralNetwork object"""
+        import os
+        if not os.path.exists(filename):
+            return None
+        with open(filename, 'rb') as f:
+            return pickle.load(f)
