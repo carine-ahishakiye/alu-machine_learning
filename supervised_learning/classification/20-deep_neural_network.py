@@ -26,20 +26,26 @@ class DeepNeuralNetwork:
         self.__cache = {}       # dictionary to hold intermediary values
         self.__weights = {}     # dictionary to hold weights and biases
 
-        # He et al. initialization
+        # He initialization
         for i in range(self.__L):
             if not isinstance(layers[i], int) or layers[i] <= 0:
-                raise TypeError("layers must be a list of positive integers")
+                raise TypeError(
+                    "layers must be a list of positive integers"
+                )
 
             layer_key_W = 'W' + str(i + 1)
             layer_key_b = 'b' + str(i + 1)
 
             if i == 0:
-                self.__weights[layer_key_W] = (np.random.randn(layers[i], nx) *
-                                               np.sqrt(2. / nx))
+                self.__weights[layer_key_W] = (
+                    np.random.randn(layers[i], nx) *
+                    np.sqrt(2.0 / nx)
+                )
             else:
-                self.__weights[layer_key_W] = (np.random.randn(layers[i], layers[i - 1]) *
-                                               np.sqrt(2. / layers[i - 1]))
+                self.__weights[layer_key_W] = (
+                    np.random.randn(layers[i], layers[i - 1]) *
+                    np.sqrt(2.0 / layers[i - 1])
+                )
             self.__weights[layer_key_b] = np.zeros((layers[i], 1))
 
     @property
@@ -70,8 +76,7 @@ class DeepNeuralNetwork:
             A_prev = self.__cache['A' + str(i - 1)]
 
             Z = np.matmul(W, A_prev) + b
-            # sigmoid activation
-            A = 1 / (1 + np.exp(-Z))
+            A = 1 / (1 + np.exp(-Z))  # sigmoid
             self.__cache['A' + str(i)] = A
 
         return A, self.__cache
@@ -84,8 +89,9 @@ class DeepNeuralNetwork:
         Returns cost
         """
         m = Y.shape[1]
-        cost = - (1 / m) * np.sum(Y * np.log(A + 1e-8) +
-                                  (1 - Y) * np.log(1.0000001 - A))
+        cost = - (1 / m) * np.sum(
+            Y * np.log(A + 1e-8) + (1 - Y) * np.log(1.0000001 - A)
+        )
         return cost
 
     def evaluate(self, X, Y):
