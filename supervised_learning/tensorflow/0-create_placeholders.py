@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
+"""
+This module contains a function to create TensorFlow placeholders
+for a neural network classifier.
+"""
+
 import tensorflow as tf
+
 
 def create_placeholders(nx, classes):
     """
