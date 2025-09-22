@@ -54,11 +54,11 @@ def train(X_train, Y_train, X_valid, Y_valid,
 
             # Print metrics at intervals
             if i % 100 == 0 or i == iterations:
-                print(f"After {i} iterations:")
-                print(f"\tTraining Cost: {train_cost}")
-                print(f"\tTraining Accuracy: {train_acc}")
-                print(f"\tValidation Cost: {valid_cost}")
-                print(f"\tValidation Accuracy: {valid_acc}")
+                print("After {} iterations:".format(i))
+                print("\tTraining Cost: {}".format(train_cost))
+                print("\tTraining Accuracy: {}".format(train_acc))
+                print("\tValidation Cost: {}".format(valid_cost))
+                print("\tValidation Accuracy: {}".format(valid_acc))
 
             # Perform training step
             if i < iterations:
