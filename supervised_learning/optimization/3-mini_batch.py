@@ -27,7 +27,6 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
     Returns:
     str: path where the model was saved
     """
-    # Restore saved graph
     saver = tf.train.import_meta_graph(load_path + '.meta')
     with tf.Session() as sess:
         saver.restore(sess, load_path)
@@ -42,25 +41,22 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         m = X_train.shape[0]
 
         for epoch in range(epochs + 1):
-            # Evaluate on the entire dataset
             train_cost = sess.run(loss, feed_dict={x: X_train, y: Y_train})
             train_accuracy = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
             valid_cost = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
             valid_accuracy = sess.run(accuracy, feed_dict={x: X_valid, y: Y_valid})
 
-            print(f"After {epoch} epochs:")
-            print(f"\tTraining Cost: {train_cost}")
-            print(f"\tTraining Accuracy: {train_accuracy}")
-            print(f"\tValidation Cost: {valid_cost}")
-            print(f"\tValidation Accuracy: {valid_accuracy}")
+            print("After {} epochs:".format(epoch))
+            print("\tTraining Cost: {}".format(train_cost))
+            print("\tTraining Accuracy: {}".format(train_accuracy))
+            print("\tValidation Cost: {}".format(valid_cost))
+            print("\tValidation Accuracy: {}".format(valid_accuracy))
 
             if epoch == epochs:
                 break
 
-            # Shuffle training data
             X_shuffled, Y_shuffled = shuffle_data(X_train, Y_train)
 
-            # Mini-batch gradient descent
             for step, start in enumerate(range(0, m, batch_size), 1):
                 end = min(start + batch_size, m)
                 X_batch = X_shuffled[start:end]
@@ -68,15 +64,13 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
 
                 sess.run(train_op, feed_dict={x: X_batch, y: Y_batch})
 
-                # Print step info every 100 steps
                 if step % 100 == 0 or end == m:
                     step_cost = sess.run(loss, feed_dict={x: X_batch, y: Y_batch})
                     step_accuracy = sess.run(accuracy, feed_dict={x: X_batch, y: Y_batch})
-                    print(f"\tStep {step}:")
-                    print(f"\t\tCost: {step_cost}")
-                    print(f"\t\tAccuracy: {step_accuracy}")
+                    print("\tStep {}:".format(step))
+                    print("\t\tCost: {}".format(step_cost))
+                    print("\t\tAccuracy: {}".format(step_accuracy))
 
-        # Save the trained model
         save_path_final = saver.save(sess, save_path)
 
     return save_path_final
