@@ -1,4 +1,4 @@
- #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Creates the RMSProp training operation for TensorFlow
 """
@@ -19,8 +19,8 @@ def create_RMSProp_op(loss, alpha, beta2, epsilon):
     train_op (tf.Operation): the RMSProp optimization operation
     """
     optimizer = tf.train.RMSPropOptimizer(learning_rate=alpha,
-                                          decay=0.0,  # default decay
-                                          momentum=0.0,  # no momentum
+                                          decay=0.0,
+                                          momentum=0.0,
                                           epsilon=epsilon,
                                           centered=False)
     train_op = optimizer.minimize(loss)
