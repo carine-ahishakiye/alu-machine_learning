@@ -5,6 +5,7 @@ Function to calculate normalization constants (mean and std) for a dataset
 
 import numpy as np
 
+
 def normalization_constants(X):
     """
     Calculates the normalization (standardization) constants of a matrix
