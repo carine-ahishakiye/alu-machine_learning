@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Function to train a loaded neural network model using mini-batch gradient descent
+Trains a loaded neural network model using mini-batch gradient descent
 """
 
 import tensorflow as tf
-import numpy as np
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
@@ -28,12 +27,11 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
     Returns:
     str: path where the model was saved
     """
-    # Load the saved graph
+    # Restore saved graph
     saver = tf.train.import_meta_graph(load_path + '.meta')
     with tf.Session() as sess:
         saver.restore(sess, load_path)
 
-        # Get tensors/ops from collection
         graph = tf.get_default_graph()
         x = graph.get_tensor_by_name("x:0")
         y = graph.get_tensor_by_name("y:0")
@@ -44,7 +42,7 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
         m = X_train.shape[0]
 
         for epoch in range(epochs + 1):
-            # Compute cost/accuracy for entire training and validation sets
+            # Evaluate on the entire dataset
             train_cost = sess.run(loss, feed_dict={x: X_train, y: Y_train})
             train_accuracy = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
             valid_cost = sess.run(loss, feed_dict={x: X_valid, y: Y_valid})
@@ -59,18 +57,19 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
             if epoch == epochs:
                 break
 
-            # Shuffle the data
+            # Shuffle training data
             X_shuffled, Y_shuffled = shuffle_data(X_train, Y_train)
 
             # Mini-batch gradient descent
             for step, start in enumerate(range(0, m, batch_size), 1):
-                end = start + batch_size
+                end = min(start + batch_size, m)
                 X_batch = X_shuffled[start:end]
                 Y_batch = Y_shuffled[start:end]
 
                 sess.run(train_op, feed_dict={x: X_batch, y: Y_batch})
 
-                if step % 100 == 0 or end >= m:
+                # Print step info every 100 steps
+                if step % 100 == 0 or end == m:
                     step_cost = sess.run(loss, feed_dict={x: X_batch, y: Y_batch})
                     step_accuracy = sess.run(accuracy, feed_dict={x: X_batch, y: Y_batch})
                     print(f"\tStep {step}:")
