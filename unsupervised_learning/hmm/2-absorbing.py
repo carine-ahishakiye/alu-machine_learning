@@ -39,3 +39,4 @@ def absorbing(P):
                     reachable.add(s)
 
     return len(reachable) == n
+
