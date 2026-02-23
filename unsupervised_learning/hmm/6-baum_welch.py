@@ -22,7 +22,12 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
         return None, None
     if not isinstance(Emission, np.ndarray) or Emission.ndim != 2:
         return None, None
-    if not isinstance(Initial, np.ndarray) or Initial.ndim != 2:
+    if not isinstance(Initial, np.ndarray):
+        return None, None
+
+    if Initial.ndim == 1:
+        Initial = Initial.reshape(-1, 1)
+    if Initial.ndim != 2:
         return None, None
 
     T = Observations.shape[0]
