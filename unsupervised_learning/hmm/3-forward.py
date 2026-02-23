@@ -41,3 +41,4 @@ def forward(Observation, Emission, Transition, Initial):
     P = np.sum(F[:, T - 1])
 
     return P, F
+
