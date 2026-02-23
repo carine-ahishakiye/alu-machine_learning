@@ -1,0 +1,29 @@
+## 🧠 Learning Objectives
+
+By the end of this project, I should be able to confidently explain the following concepts without external assistance:
+
+### 🔷 General
+
+- **Determinant**  
+  Understand what a determinant is and how to compute it for square matrices using various methods (e.g., Laplace expansion, row reduction).
+
+- **Minor, Cofactor, and Adjugate**  
+  Be able to define and compute:
+  - **Minor**: The determinant of a smaller matrix formed by removing one row and one column.
+  - **Cofactor**: A signed minor used in matrix operations.
+  - **Adjugate**: The transpose of the cofactor matrix.
+
+- **Matrix Inverse**  
+  Know what the inverse of a matrix is, when a matrix is invertible, and how to compute it using methods such as:
+  - Adjugate and determinant
+  - Row reduction (Gauss-Jordan elimination)
+
+- **Eigenvalues and Eigenvectors**  
+  Understand the definitions of eigenvalues and eigenvectors and how to compute them by solving:
+  - The characteristic equation: `det(A - λI) = 0`
+  - The corresponding eigenvector equations: `(A - λI)v = 0`
+
+- **Definiteness of a Matrix**  
+  Understand the types of definiteness (positive definite, negative definite, semi-definite, indefinite) and how to determine a matrix's definiteness using:
+  - Leading principal minors
+  - Eigenvalue analysis
